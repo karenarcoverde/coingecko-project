@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 COINGECKO_URL = "https://api.coingecko.com/api/v3/simple/price"
 
