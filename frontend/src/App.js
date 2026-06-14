@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   createTheme,
   ThemeProvider,
@@ -120,19 +121,18 @@ export default function App() {
     setResult(null);
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/crypto?coin=${encodeURIComponent(target.trim().toLowerCase())}`
-      );
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Algo deu errado. Tente novamente.");
+      const { data } = await axios.get("http://localhost:5000/crypto", {
+        params: { coin: target.trim().toLowerCase() },
+      });
+      setResult(data);
+      setCoin(target);
+    } catch (err) {
+      const msg = err.response?.data?.error;
+      if (msg) {
+        setError(msg);
       } else {
-        setResult(data);
-        setCoin(target);
+        setError("Não foi possível conectar ao servidor. Verifique se o backend está rodando.");
       }
-    } catch {
-      setError("Não foi possível conectar ao servidor. Verifique se o backend está rodando.");
     } finally {
       setLoading(false);
     }
